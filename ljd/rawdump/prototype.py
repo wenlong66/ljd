@@ -1,7 +1,8 @@
 #
 # Copyright (C) 2013 Andrian Nord. See Copyright Notice in main.py
 #
-
+# -*- coding: utf-8 -*-
+import sys
 from ljd.util.log import errprint
 
 import ljd.bytecode.instructions as ins
@@ -10,6 +11,15 @@ import ljd.rawdump.constants
 import ljd.rawdump.debuginfo
 import ljd.rawdump.code
 
+_LJ_LE = 1
+_LJ_BE = 0
+
+_BCDUMP_F_BE = 0x01
+_BCDUMP_F_STRIP = 0x02
+_BCDUMP_F_FFI = 0x04
+_BCDUMP_F_FR2 = 0x08
+
+_PROTO_VARARG = 0x02
 
 FLAG_HAS_CHILD = 0b00000001
 FLAG_IS_VARIADIC = 0b00000010
@@ -70,23 +80,29 @@ def read(parser, prototype):
 
 
 def _read_flags(parser, prototype):
-    bits = parser.stream.read_byte()
-
-    prototype.flags.has_ffi = bool(bits & FLAG_HAS_FFI)
+    flags = parser.stream.read_byte()
+    bits = flags
+    prototype.flags.has_ffi = bool(flags & FLAG_HAS_FFI)
     bits &= ~FLAG_HAS_FFI
 
-    prototype.flags.has_iloop = bool(bits & FLAG_HAS_ILOOP)
+    prototype.flags.has_iloop = bool(flags & FLAG_HAS_ILOOP)
     bits &= ~FLAG_HAS_ILOOP
 
-    prototype.flags.has_jit = not (bits & FLAG_JIT_DISABLED)
+    prototype.flags.has_jit = not (flags & FLAG_JIT_DISABLED)
     bits &= ~FLAG_JIT_DISABLED
 
-    prototype.flags.has_sub_prototypes = bool(bits & FLAG_HAS_CHILD)
+    prototype.flags.has_sub_prototypes = bool(flags & FLAG_HAS_CHILD)
     bits &= ~FLAG_HAS_CHILD
 
-    prototype.flags.is_variadic = bool(bits & FLAG_IS_VARIADIC)
+    prototype.flags.is_variadic = bool(flags & FLAG_IS_VARIADIC)
     bits &= ~FLAG_IS_VARIADIC
 
+    print ("prototype.flags.has_ffi %d" % prototype.flags.has_ffi, file=sys.stderr)
+    print ("prototype.flags.has_iloop %d" % prototype.flags.has_iloop, file=sys.stderr)
+    print ("prototype.flags.has_jit %d" % prototype.flags.has_jit, file=sys.stderr)
+    print ("prototype.flags.has_sub_prototypes %d" % prototype.flags.has_sub_prototypes, file=sys.stderr)
+    print ("prototype.flags.is_variadic %d" % prototype.flags.is_variadic, file=sys.stderr)
+    
     if bits != 0:
         errprint("Unknown prototype flags: {0:08b}", bits)
         return False
@@ -97,7 +113,7 @@ def _read_flags(parser, prototype):
 def _read_counts_and_sizes(parser, prototype):
     prototype.arguments_count = parser.stream.read_byte()
     prototype.framesize = parser.stream.read_byte()
-
+    
     parser.upvalues_count = parser.stream.read_byte()
     parser.complex_constants_count = parser.stream.read_uleb128()
     parser.numeric_constants_count = parser.stream.read_uleb128()
@@ -116,6 +132,19 @@ def _read_counts_and_sizes(parser, prototype):
 
     parser.lines_count = prototype.lines_count
 
+    print ("_read_counts_and_sizes", file=sys.stderr)
+    print ("prototype.arguments_count %x" % prototype.arguments_count, file=sys.stderr)
+    print ("prototype.framesize %x" % prototype.framesize, file=sys.stderr)
+    
+    print ("parser.upvalues_count %x" % parser.upvalues_count, file=sys.stderr)
+    print ("parser.complex_constants_count %x" % parser.complex_constants_count, file=sys.stderr)
+    print ("parser.numeric_constants_count %x" % parser.numeric_constants_count, file=sys.stderr)
+    print ("parser.instructions_count %x" % parser.instructions_count, file=sys.stderr)
+    
+    print ("parser.debuginfo_size %x" % parser.debuginfo_size, file=sys.stderr)
+    print ("prototype.first_line_number %x" % prototype.first_line_number, file=sys.stderr)
+    print ("prototype.lines_count %x" % prototype.lines_count, file=sys.stderr)
+    
     return True
 
 
@@ -130,20 +159,22 @@ def _read_instructions(parser, prototype):
     header.A = prototype.framesize
     prototype.instructions.append(header)
 
-    while i < parser.instructions_count:
-        instruction = ljd.rawdump.code.read(parser)
+    if parser.flags.is_swap:
+        while i < parser.instructions_count:
+            instruction = ljd.rawdump.code.read(parser)
 
-        if not instruction:
-            return False
+            if not instruction:
+                return False
+                
+                
+            #print ("inst %s" % (instruction.name))
+            #print ("opcode:%x" % instruction.opcode)
+            #print ("A:%x" % instruction.A)
+            #print ("B:%x" % instruction.B)
+            #print ("CD:%x" % instruction.CD)
+            prototype.instructions.append(instruction)
 
-        #print ("inst：%s" % instruction.name)
-        #print ("opcode:%x" % instruction.opcode)
-        #print ("A:%x" % instruction.A)
-        #print ("B:%x" % instruction.B)
-        #print ("CD:%x" % instruction.CD)
-        prototype.instructions.append(instruction)
-
-        i += 1
+            i += 1
 
     return True
 

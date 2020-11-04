@@ -3,6 +3,7 @@
 #
 
 #!/usr/bin/python3
+# -*- coding: utf-8 -*-
 
 import ljd.util.binstream
 from ljd.util.log import errprint
@@ -53,7 +54,6 @@ def parse(filename):
     else:
         return None, None
 
-#zzw 20180716 解析字节码文件头部结构header
 '''
 | magic(3 bytes)| version(1 byte) | flag(1 uleb128) [| name(1 uleb128) |]
 '''
