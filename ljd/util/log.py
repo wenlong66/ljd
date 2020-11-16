@@ -14,6 +14,7 @@ def errprint(*args):
 		fmt = args.pop(0)
 
 	if fmt:
+		# print(fmt.format(*args), file=sys.stderr)
 		print(fmt.format(*args), file=sys.stderr)
 	else:
 		strs = [repr(x) for x in args]

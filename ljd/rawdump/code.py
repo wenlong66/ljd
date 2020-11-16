@@ -3,7 +3,6 @@
 #
 import sys
 from ljd.util.log import errprint
-from gconfig import LJ_FR2
 import ljd.bytecode.instructions as instructions
 
 
@@ -172,14 +171,11 @@ _MAP = [None] * 256
 
 def read(parser):
     global _MAP
-    # if LJ_FR2:
-        # codeword = parser.stream.read_uint(8)
-    # else:
     codeword = parser.stream.read_uint(4)
         
-    print ("codeword %08x" % codeword, file=sys.stderr)
+    # print ("codeword %08x" % codeword, file=sys.stderr)
     opcode = codeword & 0xFF
-    print ("opcode %x" % opcode, file=sys.stderr)
+    # print ("opcode %x" % opcode)
 
     instruction_class = _MAP[opcode]
 
@@ -192,6 +188,7 @@ def read(parser):
     if instruction_class.opcode != opcode:
         instruction.opcode = opcode
 
+    # print ("instruction.opcode %x name %s" % (instruction.opcode,instruction.name))
     _set_instruction_operands(parser, codeword, instruction)
 
     return instruction
@@ -206,14 +203,19 @@ def _set_instruction_operands(parser, codeword, instruction):
         A = (codeword >> 8) & 0xFF
         CD = (codeword >> 16) & 0xFFFF
 
+    # 18 instructions.MODVN 39 instructions.TSETV
     if instruction.A_type is not None:
         instruction.A = _process_operand(parser, instruction.A_type, A)
+        # print("_set_instruction_operands %x" % instruction.A)
 
     if instruction.B_type is not None:
         instruction.B = _process_operand(parser, instruction.B_type, B)
+        # print("_set_instruction_operands B %x" % instruction.B)
 
     if instruction.CD_type is not None:
         instruction.CD = _process_operand(parser, instruction.CD_type, CD)
+        # print("_set_instruction_operands CD %x" % instruction.CD)
+        
 
 
 def _process_operand(parser, operand_type, operand):

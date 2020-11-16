@@ -3,7 +3,7 @@
 #
 import sys
 from ljd.util.log import errprint
-from gconfig import LJ_FR2
+import gconfig
 
 _MAGIC = b'\x1bLJ'
 
@@ -52,6 +52,11 @@ def read(state, header):
     r = r and _read_name(state, header)
     #print("header good!")
 
+    errprint("name %s" % header.name)
+    errprint("parser.flags.is_big_endian %d" % state.flags.is_big_endian)
+    errprint("parser.flags.is_stripped %d" % state.flags.is_stripped)
+    errprint("parser.flags.has_ffi %d" % state.flags.has_ffi)
+    errprint("parser.flags.is_swap %d" % state.flags.is_swap)
     return r
 
 
@@ -83,7 +88,11 @@ def _read_flags(parser, header):
     
     bits = flags & _BCDUMP_F_FR2
     # errprint("bits {0} {1}",bits)
-    if bits != LJ_FR2 * _BCDUMP_F_FR2:
+    if bits == _BCDUMP_F_FR2:
+        gconfig.gFlagDic['LJ_FR2'] = 1
+    else:
+        gconfig.gFlagDic['LJ_FR2'] = 0    
+    if bits != gconfig.gFlagDic['LJ_FR2'] * _BCDUMP_F_FR2:
         return False
     
     header.flags.has_ffi = bits = flags & _BCDUMP_F_FFI
@@ -94,25 +103,15 @@ def _read_flags(parser, header):
     header.flags.is_big_endian = flags & _FLAG_IS_BIG_ENDIAN
     header.flags.is_stripped = flags & _BCDUMP_F_STRIP
     header.flags.is_swap = (flags & _BCDUMP_F_BE) != _LJ_BE * _BCDUMP_F_BE
-    # bits &= ~_FLAG_IS_STRIPPED
-
-    # header.flags.has_ffi = bits & _FLAG_HAS_FFI
-    # bits &= ~_FLAG_HAS_FFI
 
     # zzw.20180714 pitch: flag value is according to parser.flag when parse proto, not by header.flags
     parser.flags.is_big_endian = header.flags.is_big_endian
     parser.flags.is_stripped = header.flags.is_stripped
     parser.flags.has_ffi = header.flags.has_ffi
     parser.flags.is_swap = header.flags.is_swap
-    
-    print ("parser.flags.is_big_endian %d" % parser.flags.is_big_endian, file=sys.stderr)
-    print ("parser.flags.is_stripped %d" % parser.flags.is_stripped, file=sys.stderr)
-    print ("parser.flags.has_ffi %d" % parser.flags.has_ffi, file=sys.stderr)
-    print ("parser.flags.is_swap %d" % parser.flags.is_swap, file=sys.stderr)
     # if bits != 0:
         # errprint("Unknown flags set: {0:08b}", bits)
         # return False
-
     return True
 
 
@@ -122,5 +121,4 @@ def _read_name(state, header):
     else:
         length = state.stream.read_uleb128()
         header.name = state.stream.read_bytes(length).decode("utf8")
-    errprint("name {0}",header.name)
     return True

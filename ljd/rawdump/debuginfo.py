@@ -50,6 +50,7 @@ def _read_lineinfo(parser, line_offset, lineinfo):
 
 	while len(lineinfo) < parser.instructions_count + 1:
 		line_number = parser.stream.read_uint(lineinfo_size)
+		# print(line_number)
 		lineinfo.append(line_offset + line_number)
 
 	return True
@@ -58,8 +59,8 @@ def _read_lineinfo(parser, line_offset, lineinfo):
 def _read_upvalue_names(parser, names):
 	while len(names) < parser.upvalues_count:
 		string = parser.stream.read_zstring()
+		# print(string)
 		names.append(string.decode("utf-8"))
-
 	return True
 
 
@@ -71,11 +72,12 @@ def _read_variable_infos(parser, infos):
 		info = ljd.bytecode.debuginfo.VariableInfo()
 
 		internal_vartype = parser.stream.read_byte()
+		# print(internal_vartype)
 
 		if internal_vartype >= VARNAME__MAX:
 			prefix = internal_vartype.to_bytes(1, sys.byteorder)
 			suffix = parser.stream.read_zstring()
-
+			# print(suffix)
 			info.name = (prefix + suffix).decode("utf-8")
 			info.type = info.T_VISIBILE
 
@@ -88,7 +90,8 @@ def _read_variable_infos(parser, infos):
 
 		start_addr = last_addr + parser.stream.read_uleb128()
 		end_addr = start_addr + parser.stream.read_uleb128()
-
+		# print(start_addr)
+		# print(end_addr)
 		info.start_addr = start_addr
 		info.end_addr = end_addr
 

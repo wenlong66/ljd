@@ -9,6 +9,8 @@ from ljd.bytecode.constants import T_NIL, T_FALSE, T_TRUE
 
 import ljd.ast.nodes as nodes
 
+#
+from ljd.util.utils import dump
 
 class _State():
 	def __init__(self):
@@ -19,8 +21,8 @@ class _State():
 		self.block_starts = {}
 
 	def _warp_in_block(self, addr):
-		#print (self.block_starts)
-		#print (addr)
+		# print (self.block_starts)
+		# print (addr)
 		block = self.block_starts[addr]
 		block.warpins_count += 1
 		return block
@@ -50,7 +52,6 @@ def _build_function_definition(prototype):
 	instructions = prototype.instructions
 	#print (len(instructions))
 	node.statements.contents = _build_function_blocks(state, instructions)
-
 	return node
 
 
@@ -68,17 +69,18 @@ def _build_function_arguments(state, prototype):
 
 	return arguments
 
+_num = 0
 
 def _build_function_blocks(state, instructions):
+	global _num
 	_blockenize(state, instructions)
 	_establish_warps(state, instructions)
 
 	state.blocks[0].warpins_count = 1
-
+	
 	for block in state.blocks:
 		addr = block.first_address
 		state.block = block
-
 		while addr <= block._last_body_addr:
 			instruction = instructions[addr]
 
@@ -91,7 +93,10 @@ def _build_function_blocks(state, instructions):
 				setattr(statement, "_line", line)
 
 				block.contents.append(statement)
-
+				if _num < 99:
+					dump("statement",statement,0)	
+				_num += 1
+				print(_num)
 			addr += 1
 
 	return state.blocks
@@ -316,8 +321,8 @@ def _build_numeric_loop_warp(state, addr, instruction):
 		_build_slot(state, addr, base + 1),  # limit
 		_build_slot(state, addr, base + 2)  # step
 	]
-	#print ("%x" % instruction.A)
-	#print ("%x" %instruction.CD)
+	# print ("%x" % instruction.A)
+	# print ("%x" %instruction.CD)
 	destination = get_jump_destination(addr, instruction)
 	warp.body = state._warp_in_block(destination)
 	warp.way_out = state._warp_in_block(addr + 1)
@@ -837,10 +842,10 @@ def _build_identifier(state, addr, slot, want_type):
 
 	node.slot = slot
 	node.type = nodes.Identifier.T_SLOT
-
+	# print("_build_identifier slot:%s" % slot)
 	if want_type == nodes.Identifier.T_UPVALUE:
 		name = state.debuginfo.lookup_upvalue_name(slot)
-
+		# print("_build_identifier name:%s" % name)
 		if name is not None:
 			node.name = name
 			node.type = want_type

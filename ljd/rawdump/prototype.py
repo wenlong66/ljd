@@ -97,11 +97,11 @@ def _read_flags(parser, prototype):
     prototype.flags.is_variadic = bool(flags & FLAG_IS_VARIADIC)
     bits &= ~FLAG_IS_VARIADIC
 
-    print ("prototype.flags.has_ffi %d" % prototype.flags.has_ffi, file=sys.stderr)
-    print ("prototype.flags.has_iloop %d" % prototype.flags.has_iloop, file=sys.stderr)
-    print ("prototype.flags.has_jit %d" % prototype.flags.has_jit, file=sys.stderr)
-    print ("prototype.flags.has_sub_prototypes %d" % prototype.flags.has_sub_prototypes, file=sys.stderr)
-    print ("prototype.flags.is_variadic %d" % prototype.flags.is_variadic, file=sys.stderr)
+    # errprint ("prototype.flags.has_ffi %d" % prototype.flags.has_ffi)
+    # errprint ("prototype.flags.has_iloop %d" % prototype.flags.has_iloop)
+    # errprint ("prototype.flags.has_jit %d" % prototype.flags.has_jit)
+    # errprint ("prototype.flags.has_sub_prototypes %d" % prototype.flags.has_sub_prototypes)
+    # errprint ("prototype.flags.is_variadic %d" % prototype.flags.is_variadic)
     
     if bits != 0:
         errprint("Unknown prototype flags: {0:08b}", bits)
@@ -132,18 +132,18 @@ def _read_counts_and_sizes(parser, prototype):
 
     parser.lines_count = prototype.lines_count
 
-    print ("_read_counts_and_sizes", file=sys.stderr)
-    print ("prototype.arguments_count %x" % prototype.arguments_count, file=sys.stderr)
-    print ("prototype.framesize %x" % prototype.framesize, file=sys.stderr)
+    print ("_read_counts_and_sizes-----------------------------------")
+    print ("prototype.arguments_count %d" % prototype.arguments_count)
+    print ("prototype.framesize %d" % prototype.framesize)
     
-    print ("parser.upvalues_count %x" % parser.upvalues_count, file=sys.stderr)
-    print ("parser.complex_constants_count %x" % parser.complex_constants_count, file=sys.stderr)
-    print ("parser.numeric_constants_count %x" % parser.numeric_constants_count, file=sys.stderr)
-    print ("parser.instructions_count %x" % parser.instructions_count, file=sys.stderr)
+    print ("parser.upvalues_count %d" % parser.upvalues_count)
+    print ("parser.complex_constants_count %d" % parser.complex_constants_count)
+    print ("parser.numeric_constants_count %d" % parser.numeric_constants_count)
+    print ("parser.instructions_count %d" % parser.instructions_count)
     
-    print ("parser.debuginfo_size %x" % parser.debuginfo_size, file=sys.stderr)
-    print ("prototype.first_line_number %x" % prototype.first_line_number, file=sys.stderr)
-    print ("prototype.lines_count %x" % prototype.lines_count, file=sys.stderr)
+    print ("parser.debuginfo_size %d" % parser.debuginfo_size)
+    print ("prototype.first_line_number %d" % prototype.first_line_number)
+    print ("prototype.lines_count %d" % prototype.lines_count)
     
     return True
 
@@ -166,12 +166,15 @@ def _read_instructions(parser, prototype):
             if not instruction:
                 return False
                 
-                
-            #print ("inst %s" % (instruction.name))
-            #print ("opcode:%x" % instruction.opcode)
-            #print ("A:%x" % instruction.A)
-            #print ("B:%x" % instruction.B)
-            #print ("CD:%x" % instruction.CD)
+            # print ("inst %s" % (instruction.name))
+            # print ("opcode:%x" % instruction.opcode)
+            # if instruction.A_type != None:
+            #     print ("A:%x" % instruction.A)
+            # if instruction.B_type != None:
+            #     print ("B:%x" % instruction.B)
+            # if instruction.CD_type != None:
+            #     print ("CD:%x" % instruction.CD)
+
             prototype.instructions.append(instruction)
 
             i += 1

@@ -24,7 +24,6 @@
 #
 
 import sys
-
 import ljd.rawdump.parser
 import ljd.pseudoasm.writer
 import ljd.ast.builder
@@ -36,40 +35,7 @@ import ljd.ast.mutator
 import ljd.lua.writer
 #zzw 20180714 support str encode
 import gconfig
-
-def dump(name, obj, level=0):
-    indent = level * '\t'
-
-    if name is not None:
-        prefix = indent + name + " = "
-    else:
-        prefix = indent
-
-    if isinstance(obj, (int, float, str)):
-        print(prefix + str(obj))
-    elif isinstance(obj, list):
-        print (prefix + "[")
-
-        for value in obj:
-            dump(None, value, level + 1)
-
-        print (indent + "]")
-    elif isinstance(obj, dict):
-        print (prefix + "{")
-
-        for key, value in obj.items():
-            dump(key, value, level + 1)
-
-        print (indent + "}")
-    else:
-        print (prefix + obj.__class__.__name__)
-
-        for key in dir(obj):
-            if key.startswith("__"):
-                continue
-
-            val = getattr(obj, key)
-            dump(key, val, level + 1)
+from ljd.util.utils import dump
 
 
 def main():
@@ -86,6 +52,9 @@ def main():
     ast = ljd.ast.builder.build(prototype)
 
     assert ast is not None
+
+    # for value in ast.statements.contents:
+    #     dump(None,value,0)
 
     ljd.ast.validator.validate(ast, warped=True)
 
@@ -123,6 +92,7 @@ def main():
 if __name__ == "__main__":
     # zzw 20180714 support str encode
     gconfig.gFlagDic['strEncode'] = 'utf-8'
+    gconfig.gFlagDic['LJ_FR2'] = 1
     retval = main()
     sys.exit(retval)
 

@@ -12,7 +12,7 @@ import ljd.bytecode.prototype
 
 import ljd.rawdump.header
 import ljd.rawdump.prototype
-
+from ljd.util.utils import dump
 
 class _State():
     def __init__(self):
@@ -81,7 +81,7 @@ def _read_prototypes(state, prototypes):
             else:
                 errprint("Failed to read prototype")
                 return False
-
+        # dump("prototype",prototype,0)
         prototypes.append(prototype)
 
     return True
