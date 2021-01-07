@@ -132,18 +132,18 @@ def _read_counts_and_sizes(parser, prototype):
 
     parser.lines_count = prototype.lines_count
 
-    print ("_read_counts_and_sizes-----------------------------------")
-    print ("prototype.arguments_count %d" % prototype.arguments_count)
-    print ("prototype.framesize %d" % prototype.framesize)
+    # errprint ("_read_counts_and_sizes-----------------------------------")
+    # errprint ("prototype.arguments_count %d" % prototype.arguments_count)
+    # errprint ("prototype.framesize %d" % prototype.framesize)
     
-    print ("parser.upvalues_count %d" % parser.upvalues_count)
-    print ("parser.complex_constants_count %d" % parser.complex_constants_count)
-    print ("parser.numeric_constants_count %d" % parser.numeric_constants_count)
-    print ("parser.instructions_count %d" % parser.instructions_count)
+    # errprint ("parser.upvalues_count %d" % parser.upvalues_count)
+    # errprint ("parser.complex_constants_count %d" % parser.complex_constants_count)
+    # errprint ("parser.numeric_constants_count %d" % parser.numeric_constants_count)
+    # errprint ("parser.instructions_count %d" % parser.instructions_count)
     
-    print ("parser.debuginfo_size %d" % parser.debuginfo_size)
-    print ("prototype.first_line_number %d" % prototype.first_line_number)
-    print ("prototype.lines_count %d" % prototype.lines_count)
+    # errprint ("parser.debuginfo_size %d" % parser.debuginfo_size)
+    # errprint ("prototype.first_line_number %d" % prototype.first_line_number)
+    # errprint ("prototype.lines_count %d" % prototype.lines_count)
     
     return True
 
@@ -166,14 +166,14 @@ def _read_instructions(parser, prototype):
             if not instruction:
                 return False
                 
-            # print ("inst %s" % (instruction.name))
-            # print ("opcode:%x" % instruction.opcode)
+            # errprint ("inst %s" % (instruction.name))
+            # errprint ("opcode:%x" % instruction.opcode)
             # if instruction.A_type != None:
-            #     print ("A:%x" % instruction.A)
+            #     errprint ("A:%x" % instruction.A)
             # if instruction.B_type != None:
-            #     print ("B:%x" % instruction.B)
+            #     errprint ("B:%x" % instruction.B)
             # if instruction.CD_type != None:
-            #     print ("CD:%x" % instruction.CD)
+            #     errprint ("CD:%x" % instruction.CD)
 
             prototype.instructions.append(instruction)
 

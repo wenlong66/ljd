@@ -93,10 +93,10 @@ def _build_function_blocks(state, instructions):
 				setattr(statement, "_line", line)
 
 				block.contents.append(statement)
-				if _num < 99:
-					dump("statement",statement,0)	
-				_num += 1
-				print(_num)
+				# if _num < 99:
+				# 	dump("statement",statement,0)	
+				# _num += 1
+				# errprint(_num)
 			addr += 1
 
 	return state.blocks
@@ -842,10 +842,10 @@ def _build_identifier(state, addr, slot, want_type):
 
 	node.slot = slot
 	node.type = nodes.Identifier.T_SLOT
-	# print("_build_identifier slot:%s" % slot)
+	# errprint("_build_identifier slot:%s" % slot)
 	if want_type == nodes.Identifier.T_UPVALUE:
 		name = state.debuginfo.lookup_upvalue_name(slot)
-		# print("_build_identifier name:%s" % name)
+		# errprint("_build_identifier name:%s" % name)
 		if name is not None:
 			node.name = name
 			node.type = want_type

@@ -52,11 +52,11 @@ def read(state, header):
     r = r and _read_name(state, header)
     #print("header good!")
 
-    errprint("name %s" % header.name)
-    errprint("parser.flags.is_big_endian %d" % state.flags.is_big_endian)
-    errprint("parser.flags.is_stripped %d" % state.flags.is_stripped)
-    errprint("parser.flags.has_ffi %d" % state.flags.has_ffi)
-    errprint("parser.flags.is_swap %d" % state.flags.is_swap)
+    # errprint("name %s" % header.name)
+    # errprint("parser.flags.is_big_endian %d" % state.flags.is_big_endian)
+    # errprint("parser.flags.is_stripped %d" % state.flags.is_stripped)
+    # errprint("parser.flags.has_ffi %d" % state.flags.has_ffi)
+    # errprint("parser.flags.is_swap %d" % state.flags.is_swap)
     return r
 
 

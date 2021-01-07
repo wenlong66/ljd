@@ -173,9 +173,9 @@ def read(parser):
     global _MAP
     codeword = parser.stream.read_uint(4)
         
-    # print ("codeword %08x" % codeword, file=sys.stderr)
+    # errprint ("codeword %08x" % codeword, file=sys.stderr)
     opcode = codeword & 0xFF
-    # print ("opcode %x" % opcode)
+    # errprint ("opcode %x" % opcode)
 
     instruction_class = _MAP[opcode]
 
@@ -188,7 +188,7 @@ def read(parser):
     if instruction_class.opcode != opcode:
         instruction.opcode = opcode
 
-    # print ("instruction.opcode %x name %s" % (instruction.opcode,instruction.name))
+    # errprint ("instruction.opcode %x name %s" % (instruction.opcode,instruction.name))
     _set_instruction_operands(parser, codeword, instruction)
 
     return instruction
@@ -206,15 +206,15 @@ def _set_instruction_operands(parser, codeword, instruction):
     # 18 instructions.MODVN 39 instructions.TSETV
     if instruction.A_type is not None:
         instruction.A = _process_operand(parser, instruction.A_type, A)
-        # print("_set_instruction_operands %x" % instruction.A)
+        # errprint("_set_instruction_operands %x" % instruction.A)
 
     if instruction.B_type is not None:
         instruction.B = _process_operand(parser, instruction.B_type, B)
-        # print("_set_instruction_operands B %x" % instruction.B)
+        # errprint("_set_instruction_operands B %x" % instruction.B)
 
     if instruction.CD_type is not None:
         instruction.CD = _process_operand(parser, instruction.CD_type, CD)
-        # print("_set_instruction_operands CD %x" % instruction.CD)
+        # errprint("_set_instruction_operands CD %x" % instruction.CD)
         
 
 
